@@ -133,10 +133,11 @@ public class myController {
             return new ResponseEntity<String>(messageOut, HttpStatus.OK);
 //---------------------------------------------------------------------------
 
+/*
             //Login KVK server
             WebService service = new WebService();
             WebServiceSoap port = service.getWebServiceSoap();
-
+*/
                 /*
 
                 //Get new ticket
@@ -158,7 +159,7 @@ public class myController {
                     System.exit(1);
                 }
                 */
-
+/*
             //Connect to KVK_TEST to get Valve positions
             String response = port.loginEx("QWERTY_SANITECH", "123456"); //Loging into server TEST!!!!
             LoginExResponseObj resp = gson.fromJson(response, LoginExResponseObj.class); //Parsing response
@@ -192,7 +193,7 @@ public class myController {
             messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
             System.out.println(messageOut);
             return new ResponseEntity<String>(messageOut, HttpStatus.OK);
-
+*/
         } //device != null
 
         return new ResponseEntity<String>(HttpStatus.OK);
