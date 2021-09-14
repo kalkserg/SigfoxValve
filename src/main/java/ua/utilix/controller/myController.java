@@ -123,6 +123,16 @@ public class myController {
             System.out.println("Sending current valve positions to KVK:");
             System.out.println(dataResult);
 
+//--------------------------------------------------------------TEST
+            //downlink always
+            SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
+            Date now = new Date();
+            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + "01";
+            messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
+            System.out.println(messageOut);
+            return new ResponseEntity<String>(messageOut, HttpStatus.OK);
+//---------------------------------------------------------------------------
+
             //Login KVK server
             WebService service = new WebService();
             WebServiceSoap port = service.getWebServiceSoap();
