@@ -125,21 +125,14 @@ public class myController {
             System.out.println(dataResult);
 
 //--------------------------------------------------------------TEST
-            //downlink always
-            SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
-            formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
-            Date now = new Date();
-            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + "01" + "00";
-            messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
-            System.out.println(messageOut);
-            return new ResponseEntity<String>(messageOut, HttpStatus.OK);
+
 //---------------------------------------------------------------------------
 
-/*
+
             //Login KVK server
             WebService service = new WebService();
             WebServiceSoap port = service.getWebServiceSoap();
-*/
+
                 /*
 
                 //Get new ticket
@@ -161,7 +154,7 @@ public class myController {
                     System.exit(1);
                 }
                 */
-/*
+
             //Connect to KVK_TEST to get Valve positions
             String response = port.loginEx("QWERTY_SANITECH", "123456"); //Loging into server TEST!!!!
             LoginExResponseObj resp = gson.fromJson(response, LoginExResponseObj.class); //Parsing response
@@ -190,12 +183,13 @@ public class myController {
             System.out.println("DOWNLINK");
             //downlink always
             SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
             Date now = new Date();
-            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + String.format("%02d", device.getValveStatus()==0?0:1);
+            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + String.format("%02d", device.getValveStatus()==0?0:1) + "00";
             messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
             System.out.println(messageOut);
             return new ResponseEntity<String>(messageOut, HttpStatus.OK);
-*/
+
         } //device != null
 
         return new ResponseEntity<String>(HttpStatus.OK);
