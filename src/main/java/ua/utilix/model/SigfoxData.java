@@ -2,6 +2,8 @@ package ua.utilix.model;
 
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
+
 @Component
 public class SigfoxData implements Sigfox {
     private String id;
@@ -16,9 +18,8 @@ public class SigfoxData implements Sigfox {
     }
 
     public void setBatteryPower(int batteryPower) {
-        this.batteryPower = (float) batteryPower / 1000;
+        this.batteryPower = (float) (batteryPower / 1000.);
     }
-
 
     public Sigfox getStrategy() {
         return strategy;

@@ -88,6 +88,11 @@ public class myController {
 
         if (device != null) {
 
+            System.out.println(sigfoxId);
+            System.out.println(data);
+            System.out.println(device.getProtocol());
+            System.out.println(seqNumber);
+
             //update DB
             try {
                 sigfoxData = sigfoxParser.getData(sigfoxId, data, device.getProtocol(), seqNumber);
@@ -95,7 +100,7 @@ public class myController {
                 e.printStackTrace();
             }
             device.setPowerVoltage(sigfoxData.getBatteryPower());
-            device.setValveStatus(sigfoxData.getState());
+            device.setValveStatus(sigfoxData.getState()==0?0:100);
             deviceService.updateDevice(device);
 
             //make request vodokanal
@@ -183,7 +188,7 @@ public class myController {
         return new ResponseEntity<String>(HttpStatus.OK);
     }
 
-    @GetMapping(path = "/api")
+    @GetMapping
     public String getBody(@RequestBody(required = false) String str, Model model) {
 //        System.out.println("GET " + messageIn);
 //        System.out.println("GET " + messageOut);

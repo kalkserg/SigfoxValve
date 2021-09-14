@@ -16,7 +16,7 @@ public class Device {
     private int session_time;  //time next session
     private String meter_type;  //meter_type ControlValve = CV
     private int valveStatus; //0 = close; 100 = open;
-    private Float powerVoltage;
+    private float powerVoltage;
 
     public Device() {
     }
@@ -61,7 +61,7 @@ public class Device {
         this.valveStatus = valveStatus;
     }
 
-    public Float getPowerVoltage() {
+    public float getPowerVoltage() {
         return powerVoltage;
     }
 
