@@ -39,6 +39,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.TimeZone;
 
 @Controller
 public class myController {
@@ -126,8 +127,9 @@ public class myController {
 //--------------------------------------------------------------TEST
             //downlink always
             SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
             Date now = new Date();
-            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + "01";
+            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + "01" + "00";
             messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
             System.out.println(messageOut);
             return new ResponseEntity<String>(messageOut, HttpStatus.OK);
