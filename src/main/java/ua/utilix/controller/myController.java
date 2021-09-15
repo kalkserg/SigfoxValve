@@ -183,7 +183,7 @@ public class myController {
             System.out.println("DOWNLINK");
             //downlink always
             SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
-            formatter.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
             Date now = new Date();
             String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + String.format("%02d", device.getValveStatus()==0?0:1) + "00";
             messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
