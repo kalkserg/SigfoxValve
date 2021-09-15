@@ -183,7 +183,10 @@ public class myController {
 
 
                 //TEST------------------------------------
-                downlinkData = formatter.format(now) + String.format("%02d", now.getHours()+1) + String.format("%02d", sigfoxData.getState()==0?1:0) + "00";
+                SimpleDateFormat formatterhh = new SimpleDateFormat("HH");
+                formatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+                formatterhh.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+                downlinkData = formatter.format(now) + String.format("%02d", Integer.parseInt(formatterhh.format(now))+1) + String.format("%02d", sigfoxData.getState()==0?1:0) + "00";
                 messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
                 //--------------------------------------------------------------------------------------
 
