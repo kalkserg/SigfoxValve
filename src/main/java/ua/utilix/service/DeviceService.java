@@ -23,7 +23,6 @@ public class DeviceService {
 
     @Transactional(readOnly = true)
     public Device findBySigfoxId(String sigfoxId) {
-        System.out.println(deviceRepository.findBySigfoxId(sigfoxId));
         return deviceRepository.findBySigfoxId(sigfoxId);
     }
 

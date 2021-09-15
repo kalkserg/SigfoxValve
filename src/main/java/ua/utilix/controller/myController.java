@@ -62,7 +62,7 @@ public class myController {
 
     @PostMapping(produces = "application/json")
     public ResponseEntity<String> postBody(@RequestBody(required = false) String str, Model model) {
-        System.out.println("receive post  " + str);
+//        System.out.println("receive post  " + str);
 
         JSONObject obj = new JSONObject(str);
 
@@ -71,7 +71,7 @@ public class myController {
         String data = obj.getString("data");
         int seqNumber = obj.getInt("seqNumber");
 
-        System.out.println("sigfoxId  " + sigfoxId);
+//        System.out.println("sigfoxId  " + sigfoxId);
 
         SigfoxData sigfoxData = null;
         SigfoxParser sigfoxParser = new SigfoxParser();
@@ -83,55 +83,48 @@ public class myController {
         try {
             device = deviceService.findBySigfoxId(sigfoxId);
         } catch (Exception e) {
-            System.out.println("Error find SigfoxId");
+            System.err.println("Error find SigfoxId!");
         }
-        System.out.println("findDevice " + device);
+//        System.out.println("findDevice " + device);
 
         if (device != null) {
 
-            System.out.println(sigfoxId);
-            System.out.println(data);
-            System.out.println(device.getProtocol());
-            System.out.println(seqNumber);
+//            System.out.println(sigfoxId);
+//            System.out.println(data);
+//            System.out.println(device.getProtocol());
+//            System.out.println(seqNumber);
 
-            //update DB
             try {
                 sigfoxData = sigfoxParser.getData(sigfoxId, data, device.getProtocol(), seqNumber);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            device.setPowerVoltage(sigfoxData.getBatteryPower());
-            device.setValveStatus(sigfoxData.getState()==0?0:100);
-            deviceService.updateDevice(device);
 
-            //make request vodokanal
-            LinkedList<DataValveKVK> listDataValveKVK = new LinkedList<>(); //Linked list to send data to KVK
-            GsonBuilder builder = new GsonBuilder();
-            Gson gson = builder.create();
-            int[] invalidids = new int[0];
-            boolean success;
+                //update DB
+                device.setPowerVoltage(sigfoxData.getBatteryPower());
+                device.setValveStatus(sigfoxData.getState()==0?0:100);
+                deviceService.updateDevice(device);
 
-            DataValveKVK datakvk = new DataValveKVK();
-            datakvk.ID = device.getKvk_id();
-            datakvk.PRC_P = device.getValveStatus();
-            listDataValveKVK.add(datakvk); //adding data to listDataValve
+                //make request vodokanal
+                LinkedList<DataValveKVK> listDataValveKVK = new LinkedList<>(); //Linked list to send data to KVK
+                GsonBuilder builder = new GsonBuilder();
+                Gson gson = builder.create();
+                int[] invalidids = new int[0];
+                boolean success;
 
-            String dataJson = gson.toJson(listDataValveKVK);
+                DataValveKVK datakvk = new DataValveKVK();
+                datakvk.ID = device.getKvk_id();
+                datakvk.PRC_P = device.getValveStatus();
+                listDataValveKVK.add(datakvk); //adding data to listDataValve
 
-            dataJson = dataJson.replace("\"PRC_P\":", "\"PRC\":");
-            String dataResult = "{\"JSONS\":" + dataJson + "}"; //Generating JSON from listDataValve for KVK
+                String dataJson = gson.toJson(listDataValveKVK);
 
-            System.out.println("Sending current valve positions to KVK:");
-            System.out.println(dataResult);
+                dataJson = dataJson.replace("\"PRC_P\":", "\"PRC\":");
+                String dataResult = "{\"JSONS\":" + dataJson + "}"; //Generating JSON from listDataValve for KVK
 
-//--------------------------------------------------------------TEST
+                System.out.println("Sending current valve positions to KVK:");
+                System.out.println(dataResult);
 
-//---------------------------------------------------------------------------
-
-
-            //Login KVK server
-            WebService service = new WebService();
-            WebServiceSoap port = service.getWebServiceSoap();
+                //Login KVK server
+                WebService service = new WebService();
+                WebServiceSoap port = service.getWebServiceSoap();
 
                 /*
 
@@ -155,40 +148,53 @@ public class myController {
                 }
                 */
 
-            //Connect to KVK_TEST to get Valve positions
-            String response = port.loginEx("QWERTY_SANITECH", "123456"); //Loging into server TEST!!!!
-            LoginExResponseObj resp = gson.fromJson(response, LoginExResponseObj.class); //Parsing response
+                //Connect to KVK_TEST to get Valve positions
+                String response = port.loginEx("QWERTY_SANITECH", "123456"); //Loging into server TEST!!!!
+                LoginExResponseObj resp = gson.fromJson(response, LoginExResponseObj.class); //Parsing response
 
-            //if there is something in listDataValve and login success
-            if ((listDataValveKVK.size() > 0) & (resp.Success)) {
-                //if ((listDataValve.size()>0) & (ticket!=null)) {
-                System.out.println("Receive valves positions from KVK:");
-                String response1 = port.executeEx("_ACCXB.SENDVALVEDATA", dataResult, resp.Ticket); //Send values
-                //String response1 = port.executeEx("_ACCXB.SENDVALVEDATA", dataResult, ticket); //Send values
-                System.out.println(response1);
-                System.out.println();
-                response1 = response1.replace("INVALID IDS", "INVALIDIDS");
-                ValveResponseObj resp1 = gson.fromJson(response1, ValveResponseObj.class); //Parsing response1
-                success = resp1.SUCCESS;
-                DataValveKVK[] dataValves = resp1.DATA;
-                invalidids = resp1.INVALIDIDS;
-                if (success) {
-                    for (DataValveKVK res : dataValves) {
-                        if (device.getKvk_id() == res.ID) {
-                            if(device.getValveStatus()!=res.PRC_P) { device.setValveStatus(res.PRC_P); deviceService.updateDevice(device);}
+                //if there is something in listDataValve and login success
+                if ((listDataValveKVK.size() > 0) & (resp.Success)) {
+                    //if ((listDataValve.size()>0) & (ticket!=null)) {
+                    System.out.println("Receive valves positions from KVK:");
+                    String response1 = port.executeEx("_ACCXB.SENDVALVEDATA", dataResult, resp.Ticket); //Send values
+                    //String response1 = port.executeEx("_ACCXB.SENDVALVEDATA", dataResult, ticket); //Send values
+                    System.out.println(response1);
+                    System.out.println();
+                    response1 = response1.replace("INVALID IDS", "INVALIDIDS");
+                    ValveResponseObj resp1 = gson.fromJson(response1, ValveResponseObj.class); //Parsing response1
+                    success = resp1.SUCCESS;
+                    DataValveKVK[] dataValves = resp1.DATA;
+                    invalidids = resp1.INVALIDIDS;
+                    if (success) {
+                        for (DataValveKVK res : dataValves) {
+                            if (device.getKvk_id() == res.ID) {
+                                if(device.getValveStatus()!=res.PRC_P) { device.setValveStatus(res.PRC_P); deviceService.updateDevice(device);}
+                            }
                         }
                     }
                 }
+                System.out.println("DOWNLINK");
+                //downlink always
+                SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
+                formatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+                Date now = new Date();
+                String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + String.format("%02d", device.getValveStatus()==0?0:1) + "00";
+                messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
+
+
+                //TEST------------------------------------
+                downlinkData = formatter.format(now) + String.format("%02d", now.getHours()+1) + String.format("%02d", sigfoxData.getState()==0?1:0) + "00";
+                messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
+                //--------------------------------------------------------------------------------------
+
+                System.out.println(messageOut);
+                return new ResponseEntity<String>(messageOut, HttpStatus.OK);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+
+
             }
-            System.out.println("DOWNLINK");
-            //downlink always
-            SimpleDateFormat formatter = new SimpleDateFormat("YYMMddHHmm");
-            formatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
-            Date now = new Date();
-            String downlinkData = formatter.format(now) + String.format("%02d", device.getSession_time()) + String.format("%02d", device.getValveStatus()==0?0:1) + "00";
-            messageOut = "{ \"" + sigfoxId + "\": {\"downlinkData\" : \"" + downlinkData + "\" }}";
-            System.out.println(messageOut);
-            return new ResponseEntity<String>(messageOut, HttpStatus.OK);
+
 
         } //device != null
 

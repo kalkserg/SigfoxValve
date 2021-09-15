@@ -16,7 +16,7 @@ public class SigfoxParser {
                 sigfoxData = sigfoxData.getStrategy().parse(id, input, sequence);
             }
         } catch (Exception ex) {
-            throw new Exception("Error input data id: " + id);
+            throw new Exception(ex.getMessage() + "Error parse data for id: " + id + "!\n");
         }
         return sigfoxData;
     }
